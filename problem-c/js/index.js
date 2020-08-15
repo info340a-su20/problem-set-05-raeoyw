@@ -8,7 +8,7 @@ let state = {
     {id:1, description:'Complete this task', complete:true},
     {id:2, description:'Fill in the `js/index.js` file and complete the exercise', complete:false} 
   ],
-  inputtedText: ''
+  inputtedText: '' //what thing is currently typing
 };
 
 /* Your code goes here! */
@@ -22,7 +22,21 @@ let state = {
 //You can test this function by logging out the returned item. You will need to
 //pass it an object representing a single task; you can pass it one of the
 //examples from the state (e.g., `state.taskList[0]`).
+function createTaskItemElement(taskObj) {
+  let li = document.createElement('li');
+  li.textContent = taskObj.description;
+  if(taskObj.complete) {
+    li.classList.add('font-strike');
+  }
 
+  li.addEventListener('click', function() {
+    taskObj.complete = !taskObj.complete; //toggle
+    renderTaskList();
+  })
+
+  return li;
+}
+//let createdLi = createTaskItemElement(state.taskList[0]);
 
 
 //Define a function `renderTaskList()` that will fill in the provided <ol> with 
@@ -30,11 +44,21 @@ let state = {
 //`createTaskItemElement()` function to create each <li> element.
 //Make sure your function removes any previous list content so that only the 
 //current task list is shown after this render call!
+function renderTaskList() {
+  let ol = document.querySelector('ol');
+  ol.innerHTML = ''; //erase all content of the <ol> (used to have)
 
+  for(let taskObj of state.taskList) {
+    let li = createTaskItemElement(taskObj);
+    ol.appendChild(li);
+  }
+
+  renderInput();
+}
 
 
 //Call your `renderTaskList()` function to render the initial list of tasks!
-
+renderTaskList();
 
 
 //Define a function `addNewTask()` that will add a new task to the `taskList`
@@ -46,23 +70,43 @@ let state = {
 //it an empty string), and then call `renderTaskList()` to show the updated list.
 //IMPORTANT: this function should _only_ modify the state and call the render 
 //function; it should not interact directly with the DOM!
+function addNewTask() {
+  let newTaskObj = {
+    id: state.taskList[state.taskList.length -1].id + 1,
+    description: state.inputtedText,
+    complete: false
+  }
 
+  state.taskList.push(newTaskObj); //add to the list!
+  state.inputtedText = ''
 
-
-//To handle user input, add another event listener to the `<input>` element that
-//listens for `'input'` events (from when the user types something into the box).
-//This listener should use an ANONYMOUS callback function to update the state's 
-//`inputtedText` property to have the `value` of the `<input>` element.
-
+  renderTaskList();
+}
 
 
 //Add an event listener to the "add task"`button` (check the HTML for its id!) 
 //so that when the button is clicked, your `addNewTask()` function is called
 //(thereby adding a new task is added to the list).
 //
+//Note that initially, this will cause "empty" (text-less) tasks to be added!
+let addTaskButton = document.querySelector('#add-task');
+addTaskButton.addEventListener('click', addNewTask); //passing a recipe: no parentheses
+
+
+//To handle user input, add another event listener to the `<input>` element that
+//listens for `'input'` events (from when the user types something into the box).
+//This listener should use an ANONYMOUS callback function to update the state's 
+//`inputtedText` property to have the `value` of the `<input>` element.
+//
 //You should now be able to add new items to your task list!
 //Note that items will not add when you hit the "enter" key.
+let input = document.querySelector('input');
+input.addEventListener('input', function() {
+  let whatIsTyped = input.value;
+  state.inputtedText = whatIsTyped;
 
+  renderInput();
+});
 
 
 //Time to fix some of the user experience. Define a new function `renderInput()`
@@ -75,7 +119,12 @@ let state = {
 //Add calls to your `renderInput()` function to BOTH the end of `renderTaskList()`
 //AND to the end of your `'input'` event callback (so the input renders on each
 //user interaction).
-
+function renderInput() {
+  let input = document.querySelector('input');
+  input.value = state.inputtedText;
+  let addTaskButton = document.querySelector('#add-task');
+  addTaskButton.disabled = state.inputtedText == '';
+}
 
 
 //Finally, modify the `createTaskItemElement()` function so that each list item that 
@@ -87,7 +136,20 @@ let state = {
 //
 //Fun fact: this anonymous callback will utilize a **closure**, as the function
 //will be able to access the task variable when it is called on a click!
+// function createTaskItemElement(taskObj) {
+//   let li = document.createElement('li');
+//   li.textContent = taskObj.description;
+//   if(taskObj.complete) {
+//     li.classList.add('font-strike');
+//   }
+  
+//   li.addEventListener('click', function() {
+//     taskObj.complete = !taskObj.complete; //toggle
+//     renderTaskList();
+//   })
 
+//   return li;
+// }
 
 
 

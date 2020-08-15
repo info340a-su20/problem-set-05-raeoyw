@@ -13,18 +13,19 @@ const COLORS_9 = {
 /* Your code goes here! */
 
 //Create a variable `h1` that refers to the `<h1>` element in the DOM.
-
+let h1 = document.querySelector("h1");
 
 //Change the `textContent` of the `<h1>` element to be "Which Swatch?"
-
+h1.textContent = "Which Swatch?";
 
 //Somehow the rainbow icon image was included without an alt tag! Set its `alt`
 //attribute to be "A beautiful rainbow".
-
+let img = document.querySelector('img');
+img.alt = "A beautiful rainbow";
 
 //Give the image the Bootstrap-provided `float-right` CSS class to make it float
 //to the right of the screen
-
+img.classList.add("float-right");
 
 /*Define a function `createColorBox()` that takes in two parameters: a color 
 string (e.g., "blue") and a numeric size (in pixels, e.g., 100). The function 
@@ -38,29 +39,27 @@ shoukld do the following:
 You can test this function by logging out the returned value and checking its
 attributes.
 */
+function createColorBox(colorString, numericSize) {
+  console.log(colorString)
+  let div = document.createElement("div");
+  div.classList.add("d-inline-block");
+  div.style.backgroundColor = colorString;
+  div.style.width = numericSize + "px";
+  div.style.height = numericSize + "px";
 
-
-
-/* Define a function `getElementWidth()` that takes in a DOM element (not a 
-string!). This function should return the width in pixels (a number) of that
-element.
- - Determine this width by calling the `getBoundingClientRect()` method on the
-   argument element. This method returns an Object containing the element's
-   width and height. Return the `width` value of that object.
-*/
-
-
+  return div;
+}
 
 /* Define a function `renderPaletteRow()` that takes in two arguments: array of 
 color strings (like a SINGLE ELEMENT of the `COLORS_9` object), and a "parent" 
 DOM element. The function should do the following:
+  - Call the `getBoundingClientRect()` method on the "parent" DOM element to
+    determine its width and height (look up the function to see how it works!)
   - Create a new `div` element to contain a row of colored boxes
   - Use the `createColorBox()` function to create a div FOR EACH element in the 
     argument array. Each "color box" should take up an equal portion of the 
     parent element (e.g., if the parent has a width of 600 and the array has 3 
-    elements, each color box would be 200px in size).    
-    You should use your `getElementWidth()` function (passing in the "parent" 
-    DOM element) to determine its width.
+    elements, each color box would be 200px in size).
   - Append EACH "color box" to the container div you created.
   - Append the container div to the parent element.
 
@@ -71,8 +70,15 @@ browser window unless you refresh.
 
 You should NOT include any test calls when running Jest tests!
 */
-
-
+function renderPaletteRow(arrayColor, parentElement) {
+  let div = document.createElement('div');
+  let size = parentElement.getBoundingClientRect();
+  for(let color of arrayColor) {
+    let colorBox = createColorBox(color, size.width / arrayColor.length);
+    div.appendChild(colorBox);
+  }
+  parentElement.appendChild(div);
+}
 
 /* Define a function `renderPaletteTable()` that takes no arguments and renders 
 a color palette row for each of the palettes in the `COLORS_9` object into the 
@@ -84,8 +90,13 @@ Tip: note that `COLORS_9` is an object, not an array! You'll need to use a
 
 Call your `renderPaletteTable()` method to display all the color palettes!
 */
-
-
+let parent = document.querySelector('main');
+function renderPaletteTable() {
+  for(let color in COLORS_9) {
+    renderPaletteRow(COLORS_9[color], parent);
+  }
+}
+renderPaletteTable();
 
 //Finally, remove the paragraph in the header that explains how to complete the 
 //problem.
